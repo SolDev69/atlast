@@ -143,7 +143,7 @@ public class ResourcePackLoader {
       ProgressScreen var4 = new ProgressScreen();
       var3.put("X-Minecraft-Username", MinecraftClient.getInstance().getSession().getUsername());
       var3.put("X-Minecraft-UUID", MinecraftClient.getInstance().getSession().getUuid());
-      var3.put("X-Minecraft-Version", "14w30b");
+      var3.put("X-Minecraft-Version", "14w30c");
       this.awaitingServerResourcePack = true;
       MinecraftClient.getInstance().openScreen(var4);
       NetworkUtils.downloadServerPack(dst, url, new ServerResourcePack() {

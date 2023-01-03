@@ -45,7 +45,7 @@ public class DedicatedServer extends MinecraftServer implements IDedicatedServer
    private boolean hasGui;
 
    public DedicatedServer(File gameDir) {
-      super(gameDir, Proxy.NO_PROXY);
+      super(gameDir, Proxy.NO_PROXY, USER_CACHE);
       new Thread("Server Infinisleeper") {
          {
             this.setDaemon(true);
@@ -83,7 +83,7 @@ public class DedicatedServer extends MinecraftServer implements IDedicatedServer
       };
       var1.setDaemon(true);
       var1.start();
-      LOGGER.info("Starting minecraft server version 14w30b");
+      LOGGER.info("Starting minecraft server version 14w30c");
       if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L) {
          LOGGER.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
       }
@@ -136,9 +136,9 @@ public class DedicatedServer extends MinecraftServer implements IDedicatedServer
 
          try {
             this.getNetworkIo().bind(var3, this.getServerPort());
-         } catch (IOException var16) {
+         } catch (IOException var17) {
             LOGGER.warn("**** FAILED TO BIND TO PORT!");
-            LOGGER.warn("The exception was: {}", new Object[]{var16.toString()});
+            LOGGER.warn("The exception was: {}", new Object[]{var17.toString()});
             LOGGER.warn("Perhaps a server is already running on that port?");
             return false;
          }
@@ -175,14 +175,14 @@ public class DedicatedServer extends MinecraftServer implements IDedicatedServer
                   if (var11 != 0L) {
                      var9 = var11;
                   }
-               } catch (NumberFormatException var15) {
+               } catch (NumberFormatException var16) {
                   var9 = (long)var6.hashCode();
                }
             }
 
-            WorldGeneratorType var17 = WorldGeneratorType.byId(var7);
-            if (var17 == null) {
-               var17 = WorldGeneratorType.DEFAULT;
+            WorldGeneratorType var18 = WorldGeneratorType.byId(var7);
+            if (var18 == null) {
+               var18 = WorldGeneratorType.DEFAULT;
             }
 
             this.shouldAnnouncePlayerAchievements();
@@ -195,7 +195,7 @@ public class DedicatedServer extends MinecraftServer implements IDedicatedServer
             this.setWorldHeight(MathHelper.clamp(this.getWorldHeight(), 64, 256));
             this.properties.set("max-build-height", this.getWorldHeight());
             LOGGER.info("Preparing level \"" + this.getWorldDirName() + "\"");
-            this.loadWorld(this.getWorldDirName(), this.getWorldDirName(), var9, var17, var8);
+            this.loadWorld(this.getWorldDirName(), this.getWorldDirName(), var9, var18, var8);
             long var12 = System.nanoTime() - var4;
             String var14 = String.format("%.3fs", (double)var12 / 1.0E9);
             LOGGER.info("Done (" + var14 + ")! For help, type \"help\" or \"?\"");
@@ -211,6 +211,10 @@ public class DedicatedServer extends MinecraftServer implements IDedicatedServer
                this.rconServer.start();
             }
 
+            Thread var15 = new Thread(new ServerWatchdog(this));
+            var15.setName("Server Watchdog");
+            var15.setDaemon(true);
+            var15.start();
             return true;
          }
       }

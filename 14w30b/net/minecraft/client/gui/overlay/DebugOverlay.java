@@ -88,7 +88,7 @@ public class DebugOverlay extends GuiElement {
       if (this.showReducedInfo()) {
          return Lists.newArrayList(
             new String[]{
-               "Minecraft 14w30b - " + this.client.fpsDebugString,
+               "Minecraft 14w30c - " + this.client.fpsDebugString,
                this.client.worldRenderer.getChunkDebugInfo(),
                "P: " + this.client.particleManager.getParticlesDebugInfo() + ". T: " + this.client.world.getEntitiesDebugInfo(),
                this.client.world.getChunkSourceDebugInfo(),
@@ -116,7 +116,7 @@ public class DebugOverlay extends GuiElement {
 
          ArrayList var5 = Lists.newArrayList(
             new String[]{
-               "Minecraft 14w30b (" + this.client.getGameVersion() + "/" + ClientBrandRetriever.getClientModName() + ")",
+               "Minecraft 14w30c (" + this.client.getGameVersion() + "/" + ClientBrandRetriever.getClientModName() + ")",
                this.client.fpsDebugString,
                this.client.worldRenderer.getChunkDebugInfo(),
                this.client.worldRenderer.getEntityDebugInfo(),

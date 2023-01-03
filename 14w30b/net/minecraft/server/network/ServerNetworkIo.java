@@ -137,36 +137,34 @@ public class ServerNetworkIo {
 
          while(var2.hasNext()) {
             final Connection var3 = (Connection)var2.next();
-            if (!var3.isOpen()) {
-               var2.remove();
-               if (var3.getDisconnectReason() != null) {
-                  var3.getListener().onDisconnect(var3.getDisconnectReason());
-               } else if (var3.getListener() != null) {
-                  var3.getListener().onDisconnect(new LiteralText("Disconnected"));
-               }
-            } else {
-               try {
-                  var3.tick();
-               } catch (Exception var8) {
-                  if (var3.isLocal()) {
-                     CrashReport var10 = CrashReport.of(var8, "Ticking memory connection");
-                     CashReportCategory var6 = var10.addCategory("Ticking connection");
-                     var6.add("Connection", new Callable() {
-                        public String call() {
-                           return var3.toString();
+            if (!var3.hasChannel()) {
+               if (!var3.isOpen()) {
+                  var2.remove();
+                  var3.handleDisconnection();
+               } else {
+                  try {
+                     var3.tick();
+                  } catch (Exception var8) {
+                     if (var3.isLocal()) {
+                        CrashReport var10 = CrashReport.of(var8, "Ticking memory connection");
+                        CashReportCategory var6 = var10.addCategory("Ticking connection");
+                        var6.add("Connection", new Callable() {
+                           public String call() {
+                              return var3.toString();
+                           }
+                        });
+                        throw new CrashException(var10);
+                     }
+
+                     LOGGER.warn("Failed to handle packet for " + var3.getAddress(), var8);
+                     final LiteralText var5 = new LiteralText("Internal server error");
+                     var3.send(new DisconnectS2CPacket(var5), new GenericFutureListener() {
+                        public void operationComplete(Future future) {
+                           var3.disconnect(var5);
                         }
                      });
-                     throw new CrashException(var10);
+                     var3.disableAutoRead();
                   }
-
-                  LOGGER.warn("Failed to handle packet for " + var3.getAddress(), var8);
-                  final LiteralText var5 = new LiteralText("Internal server error");
-                  var3.send(new DisconnectS2CPacket(var5), new GenericFutureListener() {
-                     public void operationComplete(Future future) {
-                        var3.disconnect(var5);
-                     }
-                  });
-                  var3.disableAutoRead();
                }
             }
          }

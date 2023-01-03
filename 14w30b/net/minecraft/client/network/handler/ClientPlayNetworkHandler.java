@@ -473,7 +473,7 @@ public class ClientPlayNetworkHandler implements ClientPlayPacketHandler {
          double var7 = (double)var2.packetZ / 32.0;
          float var9 = (float)(packet.getYaw() * 360) / 256.0F;
          float var10 = (float)(packet.getPitch() * 360) / 256.0F;
-         var2.updatePositionAndAngles(var3, var5, var7, var9, var10, 3);
+         var2.updatePositionAndAngles(var3, var5, var7, var9, var10, 3, true);
          var2.onGround = packet.getOnGround();
       }
    }
@@ -499,7 +499,7 @@ public class ClientPlayNetworkHandler implements ClientPlayPacketHandler {
          double var7 = (double)var2.packetZ / 32.0;
          float var9 = packet.hasAngles() ? (float)(packet.getYaw() * 360) / 256.0F : var2.yaw;
          float var10 = packet.hasAngles() ? (float)(packet.getPitch() * 360) / 256.0F : var2.pitch;
-         var2.updatePositionAndAngles(var3, var5, var7, var9, var10, 3);
+         var2.updatePositionAndAngles(var3, var5, var7, var9, var10, 3, false);
          var2.onGround = packet.getOnGround();
       }
    }

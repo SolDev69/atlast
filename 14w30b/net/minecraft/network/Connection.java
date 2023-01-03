@@ -29,6 +29,7 @@ import net.minecraft.network.encryption.PacketDecryptor;
 import net.minecraft.network.encryption.PacketEncryptor;
 import net.minecraft.network.handler.PacketHandler;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.LazySupplier;
@@ -64,6 +65,7 @@ public class Connection extends SimpleChannelInboundHandler {
    private PacketHandler listener;
    private Text disconnectReason;
    private boolean encrypted;
+   private boolean disconnected;
 
    public Connection(PacketFlow flow) {
       this.flow = flow;
@@ -191,7 +193,7 @@ public class Connection extends SimpleChannelInboundHandler {
 
    public void disconnect(Text reason) {
       if (this.channel.isOpen()) {
-         this.channel.close();
+         this.channel.close().awaitUninterruptibly();
          this.disconnectReason = reason;
       }
    }
@@ -259,6 +261,10 @@ public class Connection extends SimpleChannelInboundHandler {
       return this.channel != null && this.channel.isOpen();
    }
 
+   public boolean hasChannel() {
+      return this.channel == null;
+   }
+
    public PacketHandler getListener() {
       return this.listener;
    }
@@ -291,6 +297,17 @@ public class Connection extends SimpleChannelInboundHandler {
 
          if (this.channel.pipeline().get("compress") instanceof CompressionEncoder) {
             this.channel.pipeline().remove("compress");
+         }
+      }
+   }
+
+   public void handleDisconnection() {
+      if (!this.hasChannel() && !this.isOpen() && !this.disconnected) {
+         this.disconnected = true;
+         if (this.getDisconnectReason() != null) {
+            this.getListener().onDisconnect(this.getDisconnectReason());
+         } else if (this.getListener() != null) {
+            this.getListener().onDisconnect(new LiteralText("Disconnected"));
          }
       }
    }

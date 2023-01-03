@@ -127,7 +127,7 @@ public class ArrowEntity extends Entity implements Dispensable {
 
    @Environment(EnvType.CLIENT)
    @Override
-   public void updatePositionAndAngles(double x, double y, double z, float yaw, float pitch, int steps) {
+   public void updatePositionAndAngles(double x, double y, double z, float yaw, float pitch, int i, boolean bl) {
       this.setPosition(x, y, z);
       this.setRotation(yaw, pitch);
    }

@@ -32,6 +32,7 @@ import net.minecraft.entity.living.player.PlayerEntity;
 import net.minecraft.entity.vehicle.MinecartEntity;
 import net.minecraft.item.group.ItemGroup;
 import net.minecraft.locale.I18n;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.resource.Identifier;
 import net.minecraft.util.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -79,6 +80,10 @@ public class Item {
       }
 
       return var1;
+   }
+
+   public boolean validateNbt(NbtCompound nbt) {
+      return false;
    }
 
    public Item setMaxStackSize(int size) {

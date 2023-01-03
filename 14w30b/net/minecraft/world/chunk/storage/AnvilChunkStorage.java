@@ -236,8 +236,8 @@ public class AnvilChunkStorage implements ChunkStorage, FileIoCallback {
       chunk.setContainsEntities(false);
       NbtList var20 = new NbtList();
 
-      for(int var21 = 0; var21 < chunk.getEntitiesBySection().length; ++var21) {
-         for(Entity var26 : chunk.getEntitiesBySection()[var21]) {
+      for(int var21 = 0; var21 < chunk.getEntities().length; ++var21) {
+         for(Entity var26 : chunk.getEntities()[var21]) {
             NbtCompound var29 = new NbtCompound();
             if (var26.writeNbtNoRider(var29)) {
                chunk.setContainsEntities(true);

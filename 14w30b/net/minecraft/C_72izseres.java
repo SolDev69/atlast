@@ -35,7 +35,7 @@ public class C_72izseres implements Runnable {
             return;
          } catch (Throwable var4) {
             CrashReport var2 = CrashReport.of(var4, "Batching chunks");
-            MinecraftClient.getInstance().crash(var2);
+            MinecraftClient.getInstance().crash(MinecraftClient.getInstance().populateCrashReport(var2));
             return;
          }
       }
@@ -105,35 +105,15 @@ public class C_72izseres implements Runnable {
             );
          }
 
-         final ListenableFuture var26 = Futures.allAsList(var8);
-         c_60jrwydru.m_89robiyro().lock();
-
-         label254: {
-            try {
-               if (c_60jrwydru.m_23eezatmj() == C_06pcqnnli.C_45bvstooc.UPLOADING) {
-                  c_60jrwydru.m_50mpmyuzs(new Runnable() {
-                     @Override
-                     public void run() {
-                        var26.cancel(true);
-                     }
-                  });
-                  break label254;
-               }
-
-               if (!c_60jrwydru.m_40fnnmaiq()) {
-                  f_78tsqvotj.warn("Chunk render task was " + c_60jrwydru.m_23eezatmj() + " when I expected it to be uploading; aborting task");
-               }
-
-               this.m_75xsrkvqo(c_60jrwydru);
-            } finally {
-               c_60jrwydru.m_89robiyro().unlock();
+         final ListenableFuture var19 = Futures.allAsList(var8);
+         c_60jrwydru.m_50mpmyuzs(new Runnable() {
+            @Override
+            public void run() {
+               var19.cancel(false);
             }
-
-            return;
-         }
-
+         });
          Futures.addCallback(
-            var26,
+            var19,
             new FutureCallback() {
                public void onSuccess(List list) {
                   C_72izseres.this.m_75xsrkvqo(c_60jrwydru);

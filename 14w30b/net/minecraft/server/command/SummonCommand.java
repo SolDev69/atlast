@@ -107,6 +107,12 @@ public class SummonCommand extends Command {
 
    @Override
    public List getSuggestions(CommandSource source, String[] args) {
-      return args.length == 1 ? suggestMatching(args, Entities.getIds()) : null;
+      if (args.length == 1) {
+         List var3 = Entities.getIds();
+         var3.add("LightningBolt");
+         return suggestMatching(args, var3);
+      } else {
+         return null;
+      }
    }
 }

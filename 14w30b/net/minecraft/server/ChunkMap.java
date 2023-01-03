@@ -219,23 +219,23 @@ public class ChunkMap {
       if (chunkViewDistance != this.chunkViewDistance) {
          int var2 = chunkViewDistance - this.chunkViewDistance;
 
-         for(ServerPlayerEntity var4 : this.players) {
-            int var5 = (int)var4.x >> 4;
-            int var6 = (int)var4.z >> 4;
+         for(ServerPlayerEntity var5 : Lists.newArrayList(this.players)) {
+            int var6 = (int)var5.x >> 4;
+            int var7 = (int)var5.z >> 4;
             if (var2 > 0) {
-               for(int var11 = var5 - chunkViewDistance; var11 <= var5 + chunkViewDistance; ++var11) {
-                  for(int var12 = var6 - chunkViewDistance; var12 <= var6 + chunkViewDistance; ++var12) {
-                     ChunkMap.ChunkHolder var9 = this.getChunk(var11, var12, true);
-                     if (!var9.players.contains(var4)) {
-                        var9.addPlayer(var4);
+               for(int var12 = var6 - chunkViewDistance; var12 <= var6 + chunkViewDistance; ++var12) {
+                  for(int var13 = var7 - chunkViewDistance; var13 <= var7 + chunkViewDistance; ++var13) {
+                     ChunkMap.ChunkHolder var10 = this.getChunk(var12, var13, true);
+                     if (!var10.players.contains(var5)) {
+                        var10.addPlayer(var5);
                      }
                   }
                }
             } else {
-               for(int var7 = var5 - this.chunkViewDistance; var7 <= var5 + this.chunkViewDistance; ++var7) {
-                  for(int var8 = var6 - this.chunkViewDistance; var8 <= var6 + this.chunkViewDistance; ++var8) {
-                     if (!this.isChunkWithinView(var7, var8, var5, var6, chunkViewDistance)) {
-                        this.getChunk(var7, var8, true).removePlayer(var4);
+               for(int var8 = var6 - this.chunkViewDistance; var8 <= var6 + this.chunkViewDistance; ++var8) {
+                  for(int var9 = var7 - this.chunkViewDistance; var9 <= var7 + this.chunkViewDistance; ++var9) {
+                     if (!this.isChunkWithinView(var8, var9, var6, var7, chunkViewDistance)) {
+                        this.getChunk(var8, var9, true).removePlayer(var5);
                      }
                   }
                }

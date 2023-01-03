@@ -30,7 +30,7 @@ public class ScoreText extends BaseText {
    @Override
    public String getString() {
       MinecraftServer var1 = MinecraftServer.getInstance();
-      if (var1 != null && StringUtils.isStringEmpty(this.value)) {
+      if (var1 != null && var1.hasGameDir() && StringUtils.isStringEmpty(this.value)) {
          Scoreboard var2 = var1.getWorld(0).getScoreboard();
          ScoreboardObjective var3 = var2.getObjective(this.objective);
          if (var2.hasScore(this.owner, var3)) {

@@ -25,10 +25,6 @@ public abstract class C_98pnhiglv {
       this.z = z;
    }
 
-   public void m_19hvyktba() {
-      GlStateManager.translatef((float)(-this.x), (float)(-this.y), (float)(-this.z));
-   }
-
    public void m_45abruuwy(ChunkBlockRenderer c_20vbkqxvz) {
       BlockPos var2 = c_20vbkqxvz.m_97olwzrjj();
       GlStateManager.translatef((float)((double)var2.getX() - this.x), (float)((double)var2.getY() - this.y), (float)((double)var2.getZ() - this.z));

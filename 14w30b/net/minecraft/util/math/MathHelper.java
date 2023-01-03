@@ -6,6 +6,7 @@ import net.ornithemc.api.EnvType;
 import net.ornithemc.api.Environment;
 
 public class MathHelper {
+   public static final float SQRT_TWO = sqrt(2.0F);
    private static final float[] SINE_TABLE = new float[65536];
    private static final int[] MULTIPLY_DE_BRUIJN_BIT_POSITION;
 

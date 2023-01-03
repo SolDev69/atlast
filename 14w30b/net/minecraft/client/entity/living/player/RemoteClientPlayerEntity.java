@@ -35,13 +35,13 @@ public class RemoteClientPlayerEntity extends ClientPlayerEntity {
    }
 
    @Override
-   public void updatePositionAndAngles(double x, double y, double z, float yaw, float pitch, int steps) {
+   public void updatePositionAndAngles(double x, double y, double z, float yaw, float pitch, int i, boolean bl) {
       this.f_25hmwzfqa = x;
       this.f_84socdtub = y;
       this.f_62wwhawcd = z;
       this.f_94lzxsmlz = (double)yaw;
       this.f_39cfboftm = (double)pitch;
-      this.f_91bqouepw = steps;
+      this.f_91bqouepw = i;
    }
 
    @Override

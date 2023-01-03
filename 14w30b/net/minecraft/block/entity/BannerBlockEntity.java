@@ -23,6 +23,7 @@ public class BannerBlockEntity extends BlockEntity {
    private String texture;
 
    public void set(ItemStack stack) {
+      this.patternsNbt = null;
       if (stack.hasNbt() && stack.getNbt().isType("BlockEntityTag", 10)) {
          NbtCompound var2 = stack.getNbt().getCompound("BlockEntityTag");
          if (var2.contains("Patterns")) {
@@ -36,7 +37,6 @@ public class BannerBlockEntity extends BlockEntity {
          }
       } else {
          this.baseColor = stack.getMetadata() & 15;
-         this.patternsNbt = null;
       }
 
       this.patterns = null;
@@ -163,6 +163,7 @@ public class BannerBlockEntity extends BlockEntity {
       STRIPE_DOWNLEFT("stripe_downleft", "dls", "  #", " # ", "#  "),
       STRIPE_SMALL("small_stripes", "ss", "# #", "# #", "   "),
       CROSS("cross", "cr", "# #", " # ", "# #"),
+      STRAIGHT_CROSS("straight_cross", "sc", " # ", "###", " # "),
       TRIANGLE_BOTTOM("triangle_bottom", "bt", "   ", " # ", "# #"),
       TRIANGLE_TOP("triangle_top", "tt", "# #", " # ", "   "),
       TRIANGLES_BOTTOM("triangles_bottom", "bts", "   ", "# #", " # "),
@@ -173,11 +174,14 @@ public class BannerBlockEntity extends BlockEntity {
       RHOMBUS_MIDDLE("rhombus", "mr", " # ", "# #", " # "),
       HALF_VERTICAL("half_vertical", "vh", "## ", "## ", "## "),
       HALF_HORIZONTAL("half_horizontal", "hh", "###", "###", "   "),
+      BORDER("border", "bo", "###", "# #", "###"),
+      CURLY_BORDER("curly_border", "cbo", new ItemStack(Blocks.VINE)),
       CREEPER("creeper", "cre", new ItemStack(Items.SKULL, 1, 4)),
       GRADIENT("gradient", "gra", "# #", " # ", " # "),
       BRICKS("bricks", "bri", new ItemStack(Blocks.BRICKS)),
       SKULL("skull", "sku", new ItemStack(Items.SKULL, 1, 1)),
-      FLOWER("flower", "flo", new ItemStack(Blocks.RED_FLOWER, 1, FlowerBlock.Type.OXEY_DAISY.getIndex()));
+      FLOWER("flower", "flo", new ItemStack(Blocks.RED_FLOWER, 1, FlowerBlock.Type.OXEY_DAISY.getIndex())),
+      MOJANG("mojang", "moj", new ItemStack(Items.GOLDEN_APPLE, 1, 1));
 
       private String name;
       private String id;

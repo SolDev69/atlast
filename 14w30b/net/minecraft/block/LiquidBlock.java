@@ -94,6 +94,22 @@ public abstract class LiquidBlock extends Block {
       }
    }
 
+   @Environment(EnvType.CLIENT)
+   public boolean isNeighboringGap(IWorld world, BlockPos pos) {
+      for(int var3 = -1; var3 <= 1; ++var3) {
+         for(int var4 = -1; var4 <= 1; ++var4) {
+            BlockState var5 = world.getBlockState(pos.add(var3, 0, var4));
+            Block var6 = var5.getBlock();
+            Material var7 = var6.getMaterial();
+            if (var7 != this.material && !var6.isOpaque()) {
+               return true;
+            }
+         }
+      }
+
+      return false;
+   }
+
    @Override
    public Box getCollisionShape(World world, BlockPos pos, BlockState state) {
       return null;

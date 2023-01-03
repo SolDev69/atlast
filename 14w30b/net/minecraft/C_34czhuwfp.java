@@ -19,7 +19,6 @@ import java.util.concurrent.ThreadFactory;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.block.BlockLayer;
 import net.minecraft.client.render.world.ChunkBlockRenderer;
-import net.minecraft.util.math.BlockPos;
 import net.ornithemc.api.EnvType;
 import net.ornithemc.api.Environment;
 import org.apache.logging.log4j.LogManager;
@@ -169,8 +168,6 @@ public class C_34czhuwfp {
    private void m_87ttiuxau(BufferBuilder c_36rbvvvbq, int i, ChunkBlockRenderer c_20vbkqxvz) {
       GL11.glNewList(i, 4864);
       GlStateManager.pushMatrix();
-      BlockPos var4 = c_20vbkqxvz.m_97olwzrjj();
-      GlStateManager.translatef((float)var4.getX(), (float)var4.getY(), (float)var4.getZ());
       c_20vbkqxvz.m_32thpmjwk();
       this.bufferUploader.end(c_36rbvvvbq, c_36rbvvvbq.getLimit());
       GlStateManager.popMatrix();

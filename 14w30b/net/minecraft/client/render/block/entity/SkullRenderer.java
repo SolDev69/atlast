@@ -104,6 +104,7 @@ public class SkullRenderer extends BlockEntityRenderer {
       GlStateManager.enableRescaleNormal();
       GlStateManager.scalef(-1.0F, -1.0F, 1.0F);
       GlStateManager.enableAlphaTest();
+      GlStateManager.enableCull();
       var9.render(null, 0.0F, 0.0F, 0.0F, rotation, 0.0F, var13);
       GlStateManager.popMatrix();
       if (blockMiningProgress >= 0) {

@@ -13,8 +13,8 @@ public class ServerListEntry {
    public String onlinePlayers;
    public String description;
    public long ping;
-   public int protocol = 30;
-   public String version = "14w30b";
+   public int protocol = 31;
+   public String version = "14w30c";
    public boolean isLoaded;
    public String playerListString;
    private ServerListEntry.ResourcePackStatus resourcePackStatus = ServerListEntry.ResourcePackStatus.PROMPT;

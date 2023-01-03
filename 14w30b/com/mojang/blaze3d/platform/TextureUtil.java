@@ -167,7 +167,7 @@ public class TextureUtil {
    public static void prepareImage(int id, int mipmapLevel, int width, int height) {
       deleteTexture(id);
       bind(id);
-      if (mipmapLevel > 0) {
+      if (mipmapLevel >= 0) {
          GL11.glTexParameteri(3553, 33085, mipmapLevel);
          GL11.glTexParameterf(3553, 33082, 0.0F);
          GL11.glTexParameterf(3553, 33083, (float)mipmapLevel);

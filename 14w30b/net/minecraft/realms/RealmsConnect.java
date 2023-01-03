@@ -50,7 +50,7 @@ public class RealmsConnect {
                      return;
                   }
    
-                  RealmsConnect.this.connection.send(new HandshakeC2SPacket(30, string, i, NetworkProtocol.LOGIN));
+                  RealmsConnect.this.connection.send(new HandshakeC2SPacket(31, string, i, NetworkProtocol.LOGIN));
                   if (RealmsConnect.this.aborted) {
                      return;
                   }
@@ -96,8 +96,8 @@ public class RealmsConnect {
       if (this.connection != null) {
          if (this.connection.isOpen()) {
             this.connection.tick();
-         } else if (this.connection.getDisconnectReason() != null) {
-            this.connection.getListener().onDisconnect(this.connection.getDisconnectReason());
+         } else {
+            this.connection.handleDisconnection();
          }
       }
    }

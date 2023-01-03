@@ -127,15 +127,31 @@ public abstract class MinecraftServer implements CommandSource, Runnable, Blocka
    private final MinecraftSessionService sessionService;
    private long lastPlayerSampleUpdate = 0L;
    private final GameProfileRepository gameProfileRepository;
-   private final PlayerCache playerCache = new PlayerCache(this, USER_CACHE);
+   private final PlayerCache playerCache;
    private final Queue pendingEvents = Queues.newArrayDeque();
    private Thread thread;
+   private long nextTickTime = getTimeMillis();
 
-   public MinecraftServer(File gameDir, Proxy proxy) {
-      instance = this;
+   @Environment(EnvType.CLIENT)
+   public MinecraftServer(Proxy proxy, File userCacheFile) {
       this.proxy = proxy;
+      instance = this;
+      this.gameDir = null;
+      this.networkIo = null;
+      this.playerCache = new PlayerCache(this, userCacheFile);
+      this.commandHandler = null;
+      this.worldStorageSource = null;
+      this.authService = new YggdrasilAuthenticationService(proxy, UUID.randomUUID().toString());
+      this.sessionService = this.authService.createMinecraftSessionService();
+      this.gameProfileRepository = this.authService.createProfileRepository();
+   }
+
+   public MinecraftServer(File gameDir, Proxy proxy, File userCacheFile) {
+      this.proxy = proxy;
+      instance = this;
       this.gameDir = gameDir;
       this.networkIo = new ServerNetworkIo(this);
+      this.playerCache = new PlayerCache(this, userCacheFile);
       this.commandHandler = this.createCommandHandler();
       this.worldStorageSource = new AnvilWorldStorageSource(gameDir);
       this.authService = new YggdrasilAuthenticationService(proxy, UUID.randomUUID().toString());
@@ -384,73 +400,73 @@ public abstract class MinecraftServer implements CommandSource, Runnable, Blocka
    public void run() {
       try {
          if (this.init()) {
-            long var1 = getTimeMillis();
-            long var51 = 0L;
+            this.nextTickTime = getTimeMillis();
+            long var1 = 0L;
             this.status.setDescription(new LiteralText(this.motd));
-            this.status.setVersion(new ServerStatus.Version("14w30b", 30));
+            this.status.setVersion(new ServerStatus.Version("14w30c", 31));
             this.setStatus(this.status);
 
             while(this.running) {
-               long var5 = getTimeMillis();
-               long var7 = var5 - var1;
-               if (var7 > 2000L && var1 - this.lastWarnTime >= 15000L) {
+               long var49 = getTimeMillis();
+               long var5 = var49 - this.nextTickTime;
+               if (var5 > 2000L && this.nextTickTime - this.lastWarnTime >= 15000L) {
                   LOGGER.warn(
                      "Can't keep up! Did the system time change, or is the server overloaded? Running {}ms behind, skipping {} tick(s)",
-                     new Object[]{var7, var7 / 50L}
+                     new Object[]{var5, var5 / 50L}
                   );
-                  var7 = 2000L;
-                  this.lastWarnTime = var1;
+                  var5 = 2000L;
+                  this.lastWarnTime = this.nextTickTime;
                }
 
-               if (var7 < 0L) {
+               if (var5 < 0L) {
                   LOGGER.warn("Time ran backwards! Did the system time change?");
-                  var7 = 0L;
+                  var5 = 0L;
                }
 
-               var51 += var7;
-               var1 = var5;
+               var1 += var5;
+               this.nextTickTime = var49;
                if (this.worlds[0].canSkipNight()) {
                   this.tick();
-                  var51 = 0L;
+                  var1 = 0L;
                } else {
-                  while(var51 > 50L) {
-                     var51 -= 50L;
+                  while(var1 > 50L) {
+                     var1 -= 50L;
                      this.tick();
                   }
                }
 
-               Thread.sleep(Math.max(1L, 50L - var51));
+               Thread.sleep(Math.max(1L, 50L - var1));
                this.loading = true;
             }
          } else {
             this.onServerCrashed(null);
          }
-      } catch (Throwable var48) {
-         LOGGER.error("Encountered an unexpected exception", var48);
+      } catch (Throwable var46) {
+         LOGGER.error("Encountered an unexpected exception", var46);
          Object var2 = null;
-         CrashReport var50;
-         if (var48 instanceof CrashException) {
-            var50 = this.populateCrashReport(((CrashException)var48).getReport());
+         CrashReport var48;
+         if (var46 instanceof CrashException) {
+            var48 = this.populateCrashReport(((CrashException)var46).getReport());
          } else {
-            var50 = this.populateCrashReport(new CrashReport("Exception in server tick loop", var48));
+            var48 = this.populateCrashReport(new CrashReport("Exception in server tick loop", var46));
          }
 
          File var3 = new File(
             new File(this.getRunDir(), "crash-reports"), "crash-" + new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date()) + "-server.txt"
          );
-         if (var50.writeToFile(var3)) {
+         if (var48.writeToFile(var3)) {
             LOGGER.error("This crash report has been saved to: " + var3.getAbsolutePath());
          } else {
             LOGGER.error("We were unable to save this crash report to disk.");
          }
 
-         this.onServerCrashed(var50);
+         this.onServerCrashed(var48);
       } finally {
          try {
             this.stop();
             this.stopped = true;
-         } catch (Throwable var46) {
-            LOGGER.error("Exception stopping the server", var46);
+         } catch (Throwable var44) {
+            LOGGER.error("Exception stopping the server", var44);
          } finally {
             this.exit();
          }
@@ -477,7 +493,7 @@ public abstract class MinecraftServer implements CommandSource, Runnable, Blocka
       }
    }
 
-   protected File getRunDir() {
+   public File getRunDir() {
       return new File(".");
    }
 
@@ -738,7 +754,7 @@ public abstract class MinecraftServer implements CommandSource, Runnable, Blocka
    }
 
    public String getGameVersion() {
-      return "14w30b";
+      return "14w30c";
    }
 
    public int getPlayerCount() {
@@ -848,6 +864,10 @@ public abstract class MinecraftServer implements CommandSource, Runnable, Blocka
 
    public static MinecraftServer getInstance() {
       return instance;
+   }
+
+   public boolean hasGameDir() {
+      return this.gameDir != null;
    }
 
    @Override
@@ -1263,5 +1283,15 @@ public abstract class MinecraftServer implements CommandSource, Runnable, Blocka
 
    public int getNetworkCompressionThreshold() {
       return 256;
+   }
+
+   @Environment(EnvType.SERVER)
+   public long getNextTickTime() {
+      return this.nextTickTime;
+   }
+
+   @Environment(EnvType.SERVER)
+   public Thread getThread() {
+      return this.thread;
    }
 }

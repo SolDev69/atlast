@@ -128,4 +128,17 @@ public class SkullItem extends Item {
 
       return super.getName(stack);
    }
+
+   @Override
+   public boolean validateNbt(NbtCompound nbt) {
+      super.validateNbt(nbt);
+      if (nbt.isType("SkullOwner", 8)) {
+         GameProfile var2 = new GameProfile(null, nbt.getString("SkullOwner"));
+         var2 = SkullBlockEntity.updateProfile(var2);
+         nbt.put("SkullOwner", NbtUtils.writeProfile(new NbtCompound(), var2));
+         return true;
+      } else {
+         return false;
+      }
+   }
 }

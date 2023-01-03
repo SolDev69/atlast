@@ -107,10 +107,10 @@ public class PaintingEntity extends DecorationEntity {
 
    @Environment(EnvType.CLIENT)
    @Override
-   public void updatePositionAndAngles(double x, double y, double z, float yaw, float pitch, int steps) {
-      BlockPos var10 = new BlockPos(x - this.x, y - this.y, z - this.z);
-      BlockPos var11 = this.pos.add(var10);
-      this.setPosition((double)var11.getX(), (double)var11.getY(), (double)var11.getZ());
+   public void updatePositionAndAngles(double x, double y, double z, float yaw, float pitch, int i, boolean bl) {
+      BlockPos var11 = new BlockPos(x - this.x, y - this.y, z - this.z);
+      BlockPos var12 = this.pos.add(var11);
+      this.setPosition((double)var12.getX(), (double)var12.getY(), (double)var12.getZ());
    }
 
    public static enum Motive {

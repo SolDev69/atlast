@@ -84,7 +84,7 @@ public abstract class CommandExecutor implements CommandSource {
       }
 
       MinecraftServer var2 = MinecraftServer.getInstance();
-      if (var2 != null && var2.areCommandBlocksEnabled()) {
+      if (var2 != null && var2.hasGameDir() && var2.areCommandBlocksEnabled()) {
          CommandHandler var3 = var2.getCommandHandler();
 
          try {
@@ -135,7 +135,7 @@ public abstract class CommandExecutor implements CommandSource {
    @Override
    public boolean sendCommandFeedback() {
       MinecraftServer var1 = MinecraftServer.getInstance();
-      return var1 == null || var1.worlds[0].getGameRules().getBoolean("commandBlockOutput");
+      return var1 == null || !var1.hasGameDir() || var1.worlds[0].getGameRules().getBoolean("commandBlockOutput");
    }
 
    @Override

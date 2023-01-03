@@ -559,7 +559,7 @@ public class GameRenderer implements ResourceReloadListener {
          GlStateManager.scaled(this.zoom, this.zoom, 1.0);
       }
 
-      Project.gluPerspective(this.getFov(tickDelta, true), (float)this.client.width / (float)this.client.height, 0.05F, this.viewDistance);
+      Project.gluPerspective(this.getFov(tickDelta, true), (float)this.client.width / (float)this.client.height, 0.05F, this.viewDistance * MathHelper.SQRT_TWO);
       GlStateManager.matrixMode(5888);
       GlStateManager.loadIdentity();
       if (this.client.options.anaglyph) {
@@ -1021,7 +1021,17 @@ public class GameRenderer implements ResourceReloadListener {
       if (this.client.options.viewDistance >= 4) {
          this.renderFog(-1, tickDelta);
          this.client.profiler.swap("sky");
+         GlStateManager.matrixMode(5889);
+         GlStateManager.loadIdentity();
+         Project.gluPerspective(this.getFov(tickDelta, true), (float)this.client.width / (float)this.client.height, 0.05F, this.viewDistance * 2.0F);
+         GlStateManager.matrixMode(5888);
          var5.renderSky(tickDelta, anaglyphRenderPass);
+         GlStateManager.matrixMode(5889);
+         GlStateManager.loadIdentity();
+         Project.gluPerspective(
+            this.getFov(tickDelta, true), (float)this.client.width / (float)this.client.height, 0.05F, this.viewDistance * MathHelper.SQRT_TWO
+         );
+         GlStateManager.matrixMode(5888);
       }
 
       this.renderFog(0, tickDelta);
@@ -1149,7 +1159,7 @@ public class GameRenderer implements ResourceReloadListener {
          this.client.profiler.swap("clouds");
          GlStateManager.matrixMode(5889);
          GlStateManager.loadIdentity();
-         Project.gluPerspective(this.getFov(tickDelta, true), (float)this.client.width / (float)this.client.height, 0.05F, this.viewDistance * 2.0F);
+         Project.gluPerspective(this.getFov(tickDelta, true), (float)this.client.width / (float)this.client.height, 0.05F, this.viewDistance * 4.0F);
          GlStateManager.matrixMode(5888);
          GlStateManager.pushMatrix();
          this.renderFog(0, tickDelta);
@@ -1158,7 +1168,9 @@ public class GameRenderer implements ResourceReloadListener {
          GlStateManager.popMatrix();
          GlStateManager.matrixMode(5889);
          GlStateManager.loadIdentity();
-         Project.gluPerspective(this.getFov(tickDelta, true), (float)this.client.width / (float)this.client.height, 0.05F, this.viewDistance);
+         Project.gluPerspective(
+            this.getFov(tickDelta, true), (float)this.client.width / (float)this.client.height, 0.05F, this.viewDistance * MathHelper.SQRT_TWO
+         );
          GlStateManager.matrixMode(5888);
       }
    }

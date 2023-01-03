@@ -77,9 +77,7 @@ public class RealmsServerStatusPinger {
                var3.tick();
             } else {
                var2.remove();
-               if (var3.getDisconnectReason() != null) {
-                  var3.getListener().onDisconnect(var3.getDisconnectReason());
-               }
+               var3.handleDisconnection();
             }
          }
       }

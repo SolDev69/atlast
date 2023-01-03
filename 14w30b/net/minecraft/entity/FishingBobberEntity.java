@@ -153,13 +153,13 @@ public class FishingBobberEntity extends Entity {
 
    @Environment(EnvType.CLIENT)
    @Override
-   public void updatePositionAndAngles(double x, double y, double z, float yaw, float pitch, int steps) {
+   public void updatePositionAndAngles(double x, double y, double z, float yaw, float pitch, int i, boolean bl) {
       this.fishingBobberX = x;
       this.fishingBobberY = y;
       this.fishingBobberZ = z;
       this.fishingBobberYaw = (double)yaw;
       this.fishingBobberPitch = (double)pitch;
-      this.steps = steps;
+      this.steps = i;
       this.velocityX = this.clientVelocityX;
       this.velocityY = this.clientVelocityY;
       this.velocityZ = this.clientVelocityZ;

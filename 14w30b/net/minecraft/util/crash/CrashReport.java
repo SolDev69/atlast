@@ -38,7 +38,7 @@ public class CrashReport {
    private void fillSystemDetails() {
       this.systemDetails.add("Minecraft Version", new Callable() {
          public String call() {
-            return "14w30b";
+            return "14w30c";
          }
       });
       this.systemDetails.add("Operating System", new Callable() {

@@ -74,8 +74,8 @@ public class ServerListEntryWidget implements EntryListWidget.Entry {
          });
       }
 
-      boolean var9 = this.entry.protocol > 30;
-      boolean var10 = this.entry.protocol < 30;
+      boolean var9 = this.entry.protocol > 31;
+      boolean var10 = this.entry.protocol < 31;
       boolean var11 = var9 || var10;
       this.client.textRenderer.drawWithoutShadow(this.entry.name, x + 32 + 3, y + 1, 16777215);
       List var12 = this.client.textRenderer.wrapLines(this.entry.description, width - 32 - 2);

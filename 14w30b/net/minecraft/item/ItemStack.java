@@ -148,6 +148,9 @@ public final class ItemStack {
 
       if (nbt.isType("tag", 10)) {
          this.nbt = nbt.getCompound("tag");
+         if (this.item != null) {
+            this.item.validateNbt(this.nbt);
+         }
       }
    }
 

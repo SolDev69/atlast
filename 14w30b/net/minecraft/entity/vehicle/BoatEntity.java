@@ -132,29 +132,42 @@ public class BoatEntity extends Entity {
 
    @Environment(EnvType.CLIENT)
    @Override
-   public void updatePositionAndAngles(double x, double y, double z, float yaw, float pitch, int steps) {
-      if (this.empty) {
-         this.velocity = steps + 5;
+   public void updatePositionAndAngles(double x, double y, double z, float yaw, float pitch, int i, boolean bl) {
+      if (bl && this.rider != null) {
+         this.prevX = this.x = x;
+         this.prevY = this.y = y;
+         this.prevZ = this.z = z;
+         this.yaw = yaw;
+         this.pitch = pitch;
+         this.velocity = 0;
+         this.setPosition(x, y, z);
+         this.velocityX = this.boatVelocityX = 0.0;
+         this.velocityY = this.boatVelocityY = 0.0;
+         this.velocityZ = this.boatVelocityZ = 0.0;
       } else {
-         double var10 = x - this.x;
-         double var12 = y - this.y;
-         double var14 = z - this.z;
-         double var16 = var10 * var10 + var12 * var12 + var14 * var14;
-         if (!(var16 > 1.0)) {
-            return;
+         if (this.empty) {
+            this.velocity = i + 5;
+         } else {
+            double var11 = x - this.x;
+            double var13 = y - this.y;
+            double var15 = z - this.z;
+            double var17 = var11 * var11 + var13 * var13 + var15 * var15;
+            if (!(var17 > 1.0)) {
+               return;
+            }
+
+            this.velocity = 3;
          }
 
-         this.velocity = 3;
+         this.boatX = x;
+         this.boatY = y;
+         this.boatZ = z;
+         this.boatYaw = (double)yaw;
+         this.boatPitch = (double)pitch;
+         this.velocityX = this.boatVelocityX;
+         this.velocityY = this.boatVelocityY;
+         this.velocityZ = this.boatVelocityZ;
       }
-
-      this.boatX = x;
-      this.boatY = y;
-      this.boatZ = z;
-      this.boatYaw = (double)yaw;
-      this.boatPitch = (double)pitch;
-      this.velocityX = this.boatVelocityX;
-      this.velocityY = this.boatVelocityY;
-      this.velocityZ = this.boatVelocityZ;
    }
 
    @Environment(EnvType.CLIENT)

@@ -113,10 +113,12 @@ public class LiquidRenderer {
             bufferBuilder.vertex(var24 + 0.0, var26 + (double)var21, var28 + 1.0, (double)var34, (double)var38);
             bufferBuilder.vertex(var24 + 1.0, var26 + (double)var22, var28 + 1.0, (double)var35, (double)var39);
             bufferBuilder.vertex(var24 + 1.0, var26 + (double)var23, var28 + 0.0, (double)var36, (double)var40);
-            bufferBuilder.vertex(var24 + 0.0, var26 + (double)var20, var28 + 0.0, (double)var33, (double)var37);
-            bufferBuilder.vertex(var24 + 1.0, var26 + (double)var23, var28 + 0.0, (double)var36, (double)var40);
-            bufferBuilder.vertex(var24 + 1.0, var26 + (double)var22, var28 + 1.0, (double)var35, (double)var39);
-            bufferBuilder.vertex(var24 + 0.0, var26 + (double)var21, var28 + 1.0, (double)var34, (double)var38);
+            if (var5.isNeighboringGap(world, pos.up())) {
+               bufferBuilder.vertex(var24 + 0.0, var26 + (double)var20, var28 + 0.0, (double)var33, (double)var37);
+               bufferBuilder.vertex(var24 + 1.0, var26 + (double)var23, var28 + 0.0, (double)var36, (double)var40);
+               bufferBuilder.vertex(var24 + 1.0, var26 + (double)var22, var28 + 1.0, (double)var35, (double)var39);
+               bufferBuilder.vertex(var24 + 0.0, var26 + (double)var21, var28 + 1.0, (double)var34, (double)var38);
+            }
          }
 
          if (var12) {

@@ -2233,15 +2233,15 @@ public abstract class World implements IWorld {
       return var2;
    }
 
-   public void addEntities(List entities) {
+   public void addEntities(Collection entities) {
       this.entities.addAll(entities);
 
-      for(int var2 = 0; var2 < entities.size(); ++var2) {
-         this.onEntityAdded((Entity)entities.get(var2));
+      for(Entity var3 : entities) {
+         this.onEntityAdded(var3);
       }
    }
 
-   public void removeEntities(List entities) {
+   public void removeEntities(Collection entities) {
       this.entitiesToRemove.addAll(entities);
    }
 

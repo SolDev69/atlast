@@ -25,8 +25,8 @@ public class C_54lbowdqm extends ChunkBlockRenderer {
    @Override
    public void resetRenderStagesAndWorld() {
       super.resetRenderStagesAndWorld();
-      if (this.f_22qhftoly >= 0) {
-         MemoryTracker.releaseList(this.f_22qhftoly);
+      if (this.f_22qhftoly != -1) {
+         MemoryTracker.releaseLists(this.f_22qhftoly, BlockLayer.values().length);
          this.f_22qhftoly = -1;
       }
    }

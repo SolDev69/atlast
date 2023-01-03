@@ -423,7 +423,7 @@ public class TitleScreen extends Screen implements ConfirmationListener {
       GlStateManager.scalef(var9, var9, var9);
       this.drawCenteredString(this.textRenderer, this.splashText, 0, -8, -256);
       GlStateManager.popMatrix();
-      String var10 = "Minecraft 14w30b";
+      String var10 = "Minecraft 14w30c";
       if (this.client.isDemo()) {
          var10 = var10 + " Demo";
       }

@@ -37,7 +37,10 @@ public class BlockEntityItemRenderer {
             if (var3.isType("SkullOwner", 10)) {
                var2 = NbtUtils.readProfile(var3.getCompound("SkullOwner"));
             } else if (var3.isType("SkullOwner", 8) && var3.getString("SkullOwner").length() > 0) {
-               var2 = new GameProfile(null, var3.getString("SkullOwner"));
+               GameProfile var4 = new GameProfile(null, var3.getString("SkullOwner"));
+               var2 = SkullBlockEntity.updateProfile(var4);
+               var3.remove("SkullOwner");
+               var3.put("SkullOwner", NbtUtils.writeProfile(new NbtCompound(), var2));
             }
          }
 
@@ -45,10 +48,10 @@ public class BlockEntityItemRenderer {
             SkullRenderer.instance.render(0.0F, 0.0F, 0.0F, Direction.UP, 0.0F, stack.getMetadata(), var2, -1);
          }
       } else {
-         Block var4 = Block.byItem(stack.getItem());
-         if (var4 == Blocks.ENDER_CHEST) {
+         Block var5 = Block.byItem(stack.getItem());
+         if (var5 == Blocks.ENDER_CHEST) {
             BlockEntityRenderDispatcher.INSTANCE.render(this.enderChest, 0.0, 0.0, 0.0, 0.0F);
-         } else if (var4 == Blocks.TRAPPED_CHEST) {
+         } else if (var5 == Blocks.TRAPPED_CHEST) {
             BlockEntityRenderDispatcher.INSTANCE.render(this.trappedChest, 0.0, 0.0, 0.0, 0.0F);
          } else {
             BlockEntityRenderDispatcher.INSTANCE.render(this.chest, 0.0, 0.0, 0.0, 0.0F);

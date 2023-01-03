@@ -147,7 +147,7 @@ public class MultiplayerServerListPinger {
       );
 
       try {
-         var3.send(new HandshakeC2SPacket(30, var2.getAddress(), var2.getPort(), NetworkProtocol.STATUS));
+         var3.send(new HandshakeC2SPacket(31, var2.getAddress(), var2.getPort(), NetworkProtocol.STATUS));
          var3.send(new ServerStatusC2SPacket());
       } catch (Throwable var5) {
          LOGGER.error(var5);
@@ -239,9 +239,7 @@ public class MultiplayerServerListPinger {
                var3.tick();
             } else {
                var2.remove();
-               if (var3.getDisconnectReason() != null) {
-                  var3.getListener().onDisconnect(var3.getDisconnectReason());
-               }
+               var3.handleDisconnection();
             }
          }
       }

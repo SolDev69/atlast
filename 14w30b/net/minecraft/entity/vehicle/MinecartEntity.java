@@ -728,13 +728,13 @@ public abstract class MinecartEntity extends Entity implements Nameable {
 
    @Environment(EnvType.CLIENT)
    @Override
-   public void updatePositionAndAngles(double x, double y, double z, float yaw, float pitch, int steps) {
+   public void updatePositionAndAngles(double x, double y, double z, float yaw, float pitch, int i, boolean bl) {
       this.clientX = x;
       this.clientY = y;
       this.clientZ = z;
       this.clientYaw = (double)yaw;
       this.clientPitch = (double)pitch;
-      this.clientInterpolationSteps = steps + 2;
+      this.clientInterpolationSteps = i + 2;
       this.velocityX = this.clientXVelocity;
       this.velocityY = this.clientYVelocity;
       this.velocityZ = this.clientZVelocity;

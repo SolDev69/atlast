@@ -14,7 +14,6 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.platform.MemoryTracker;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.Tessellator;
 import java.awt.image.BufferedImage;
@@ -296,6 +295,7 @@ public class MinecraftClient implements BlockableEventLoop, Snoopable {
       this.tempHeight = session.display.height;
       this.fullscreen = session.display.fullscreen;
       this.is64Bit = checkIs64Bit();
+      this.server = new IntegratedServer(this);
       if (session.server.ip != null) {
          this.serverAddress = session.server.ip;
          this.serverPort = session.server.port;
@@ -484,7 +484,7 @@ public class MinecraftClient implements BlockableEventLoop, Snoopable {
 
    private void initDisplay() {
       Display.setResizable(true);
-      Display.setTitle("Minecraft 14w30b");
+      Display.setTitle("Minecraft 14w30c");
 
       try {
          Display.create(new PixelFormat().withDepthBits(24));
@@ -786,12 +786,7 @@ public class MinecraftClient implements BlockableEventLoop, Snoopable {
 
          try {
             this.setWorld(null);
-         } catch (Throwable var7) {
-         }
-
-         try {
-            MemoryTracker.releaseLists();
-         } catch (Throwable var6) {
+         } catch (Throwable var5) {
          }
 
          this.soundManager.close();
@@ -1725,7 +1720,7 @@ public class MinecraftClient implements BlockableEventLoop, Snoopable {
       SocketAddress var11 = this.server.getNetworkIo().bind();
       Connection var12 = Connection.connectLocal(var11);
       var12.setListener(new ClientLoginNetworkHandler(var12, this, null));
-      var12.send(new HandshakeC2SPacket(30, var11.toString(), 0, NetworkProtocol.LOGIN));
+      var12.send(new HandshakeC2SPacket(31, var11.toString(), 0, NetworkProtocol.LOGIN));
       var12.send(new HelloC2SPacket(this.getSession().getProfile()));
       this.clientConnection = var12;
    }
@@ -1741,7 +1736,7 @@ public class MinecraftClient implements BlockableEventLoop, Snoopable {
             var3.cleanUp();
          }
 
-         if (this.server != null) {
+         if (this.server != null && this.server.hasGameDir()) {
             this.server.stopRunning();
             this.server.setInstance();
          }
@@ -1934,10 +1929,6 @@ public class MinecraftClient implements BlockableEventLoop, Snoopable {
          } else {
             NbtCompound var15 = new NbtCompound();
             var5.writeNbt(var15);
-            var15.remove("x");
-            var15.remove("y");
-            var15.remove("z");
-            var15.remove("id");
             ItemStack var17 = new ItemStack(var2, 1, var3);
             var17.addToNbt("BlockEntityTag", var15);
             NbtCompound var9 = new NbtCompound();

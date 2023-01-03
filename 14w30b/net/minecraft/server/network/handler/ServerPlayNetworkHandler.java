@@ -2,6 +2,7 @@ package net.minecraft.server.network.handler;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.Futures;
 import io.netty.buffer.Unpooled;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
@@ -68,6 +69,7 @@ import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.CommandSuggestionsS2CPacket;
 import net.minecraft.network.packet.s2c.play.ConfirmMenuActionS2CPacket;
 import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
+import net.minecraft.network.packet.s2c.play.EntityTeleportS2CPacket;
 import net.minecraft.network.packet.s2c.play.KeepAliveS2CPacket;
 import net.minecraft.network.packet.s2c.play.MenuSlotUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerMoveS2CPacket;
@@ -162,6 +164,12 @@ public class ServerPlayNetworkHandler implements ServerPlayPacketHandler, Tickab
          }
       });
       this.connection.disableAutoRead();
+      Futures.getUnchecked(this.server.submit(new Runnable() {
+         @Override
+         public void run() {
+            ServerPlayNetworkHandler.this.connection.handleDisconnection();
+         }
+      }));
    }
 
    @Override
@@ -179,11 +187,13 @@ public class ServerPlayNetworkHandler implements ServerPlayPacketHandler, Tickab
          double var3 = this.player.x;
          double var5 = this.player.y;
          double var7 = this.player.z;
-         if (!this.teleported) {
-            double var9 = packet.getX() - this.teleportTargetX;
-            double var11 = packet.getY() - this.teleportTargetY;
-            double var13 = packet.getZ() - this.teleportTargetZ;
-            if (var9 * var9 + var11 * var11 + var13 * var13 < 0.25) {
+         double var9 = 0.0;
+         double var11 = packet.getX() - this.teleportTargetX;
+         double var13 = packet.getY() - this.teleportTargetY;
+         double var15 = packet.getZ() - this.teleportTargetZ;
+         if (packet.hasPos()) {
+            var9 = var11 * var11 + var13 * var13 + var15 * var15;
+            if (!this.teleported && var9 < 0.25) {
                this.teleported = true;
             }
          }
@@ -191,25 +201,35 @@ public class ServerPlayNetworkHandler implements ServerPlayPacketHandler, Tickab
          if (this.teleported) {
             this.lastTeleportTime = this.ticks;
             if (this.player.vehicle != null) {
-               float var40 = this.player.yaw;
-               float var10 = this.player.pitch;
+               float var47 = this.player.yaw;
+               float var18 = this.player.pitch;
                this.player.vehicle.updateRiderPositon();
-               double var42 = this.player.x;
-               double var44 = this.player.y;
-               double var45 = this.player.z;
+               double var48 = this.player.x;
+               double var49 = this.player.y;
+               double var50 = this.player.z;
                if (packet.hasAngles()) {
-                  var40 = packet.getYaw();
-                  var10 = packet.getPitch();
+                  var47 = packet.getYaw();
+                  var18 = packet.getPitch();
                }
 
                this.player.onGround = packet.getOnGround();
                this.player.tickPlayer();
-               this.player.teleport(var42, var44, var45, var40, var10);
+               this.player.teleport(var48, var49, var50, var47, var18);
                if (this.player.vehicle != null) {
                   this.player.vehicle.updateRiderPositon();
                }
 
                this.server.getPlayerManager().updateTrackedPos(this.player);
+               if (this.player.vehicle != null) {
+                  if (var9 > 4.0) {
+                     Entity var51 = this.player.vehicle;
+                     this.player.networkHandler.sendPacket(new EntityTeleportS2CPacket(var51));
+                     this.teleport(this.player.x, this.player.y, this.player.z, this.player.yaw, this.player.pitch);
+                  }
+
+                  this.player.vehicle.velocityDirty = true;
+               }
+
                if (this.teleported) {
                   this.teleportTargetX = this.player.x;
                   this.teleportTargetY = this.player.y;
@@ -227,23 +247,23 @@ public class ServerPlayNetworkHandler implements ServerPlayPacketHandler, Tickab
                return;
             }
 
-            double var39 = this.player.y;
+            double var17 = this.player.y;
             this.teleportTargetX = this.player.x;
             this.teleportTargetY = this.player.y;
             this.teleportTargetZ = this.player.z;
-            double var41 = this.player.x;
-            double var43 = this.player.y;
-            double var15 = this.player.z;
-            float var17 = this.player.yaw;
-            float var18 = this.player.pitch;
+            double var19 = this.player.x;
+            double var21 = this.player.y;
+            double var23 = this.player.z;
+            float var25 = this.player.yaw;
+            float var26 = this.player.pitch;
             if (packet.hasPos() && packet.getY() == -999.0) {
                packet.setHasPos(false);
             }
 
             if (packet.hasPos()) {
-               var41 = packet.getX();
-               var43 = packet.getY();
-               var15 = packet.getZ();
+               var19 = packet.getX();
+               var21 = packet.getY();
+               var23 = packet.getZ();
                if (Math.abs(packet.getX()) > 3.0E7 || Math.abs(packet.getZ()) > 3.0E7) {
                   this.disconnect("Illegal position");
                   return;
@@ -251,67 +271,67 @@ public class ServerPlayNetworkHandler implements ServerPlayPacketHandler, Tickab
             }
 
             if (packet.hasAngles()) {
-               var17 = packet.getYaw();
-               var18 = packet.getPitch();
+               var25 = packet.getYaw();
+               var26 = packet.getPitch();
             }
 
             this.player.tickPlayer();
-            this.player.teleport(this.teleportTargetX, this.teleportTargetY, this.teleportTargetZ, var17, var18);
+            this.player.teleport(this.teleportTargetX, this.teleportTargetY, this.teleportTargetZ, var25, var26);
             if (!this.teleported) {
                return;
             }
 
-            double var19 = var41 - this.player.x;
-            double var21 = var43 - this.player.y;
-            double var23 = var15 - this.player.z;
-            double var25 = Math.min(Math.abs(var19), Math.abs(this.player.velocityX));
-            double var27 = Math.min(Math.abs(var21), Math.abs(this.player.velocityY));
-            double var29 = Math.min(Math.abs(var23), Math.abs(this.player.velocityZ));
-            double var31 = var25 * var25 + var27 * var27 + var29 * var29;
-            if (var31 > 100.0 && (!this.server.isSinglePlayer() || !this.server.getUserName().equals(this.player.getName()))) {
+            double var27 = var19 - this.player.x;
+            double var29 = var21 - this.player.y;
+            double var31 = var23 - this.player.z;
+            double var33 = Math.min(Math.abs(var27), Math.abs(this.player.velocityX));
+            double var35 = Math.min(Math.abs(var29), Math.abs(this.player.velocityY));
+            double var37 = Math.min(Math.abs(var31), Math.abs(this.player.velocityZ));
+            double var39 = var33 * var33 + var35 * var35 + var37 * var37;
+            if (var39 > 100.0 && (!this.server.isSinglePlayer() || !this.server.getUserName().equals(this.player.getName()))) {
                LOGGER.warn(
-                  this.player.getName() + " moved too quickly! " + var19 + "," + var21 + "," + var23 + " (" + var25 + ", " + var27 + ", " + var29 + ")"
+                  this.player.getName() + " moved too quickly! " + var27 + "," + var29 + "," + var31 + " (" + var33 + ", " + var35 + ", " + var37 + ")"
                );
                this.teleport(this.teleportTargetX, this.teleportTargetY, this.teleportTargetZ, this.player.yaw, this.player.pitch);
                return;
             }
 
-            float var33 = 0.0625F;
-            boolean var34 = var2.getCollisions(this.player, this.player.getBoundingBox().contract((double)var33, (double)var33, (double)var33)).isEmpty();
-            if (this.player.onGround && !packet.getOnGround() && var21 > 0.0) {
+            float var41 = 0.0625F;
+            boolean var42 = var2.getCollisions(this.player, this.player.getBoundingBox().contract((double)var41, (double)var41, (double)var41)).isEmpty();
+            if (this.player.onGround && !packet.getOnGround() && var29 > 0.0) {
                this.player.jump();
             }
 
-            this.player.move(var19, var21, var23);
+            this.player.move(var27, var29, var31);
             this.player.onGround = packet.getOnGround();
-            var19 = var41 - this.player.x;
-            var21 = var43 - this.player.y;
-            if (var21 > -0.5 || var21 < 0.5) {
-               var21 = 0.0;
+            var27 = var19 - this.player.x;
+            var29 = var21 - this.player.y;
+            if (var29 > -0.5 || var29 < 0.5) {
+               var29 = 0.0;
             }
 
-            var23 = var15 - this.player.z;
-            var31 = var19 * var19 + var21 * var21 + var23 * var23;
-            boolean var37 = false;
-            if (var31 > 0.0625 && !this.player.isSleeping() && !this.player.interactionManager.isCreative()) {
-               var37 = true;
+            var31 = var23 - this.player.z;
+            var39 = var27 * var27 + var29 * var29 + var31 * var31;
+            boolean var45 = false;
+            if (var39 > 0.0625 && !this.player.isSleeping() && !this.player.interactionManager.isCreative()) {
+               var45 = true;
                LOGGER.warn(this.player.getName() + " moved wrongly!");
             }
 
-            this.player.teleport(var41, var43, var15, var17, var18);
+            this.player.teleport(var19, var21, var23, var25, var26);
             this.player.tickNonRidingMovmentRelatedStats(this.player.x - var3, this.player.y - var5, this.player.z - var7);
             if (!this.player.noClip) {
-               boolean var38 = var2.getCollisions(this.player, this.player.getBoundingBox().contract((double)var33, (double)var33, (double)var33)).isEmpty();
-               if (var34 && (var37 || !var38) && !this.player.isSleeping()) {
-                  this.teleport(this.teleportTargetX, this.teleportTargetY, this.teleportTargetZ, var17, var18);
+               boolean var46 = var2.getCollisions(this.player, this.player.getBoundingBox().contract((double)var41, (double)var41, (double)var41)).isEmpty();
+               if (var42 && (var45 || !var46) && !this.player.isSleeping()) {
+                  this.teleport(this.teleportTargetX, this.teleportTargetY, this.teleportTargetZ, var25, var26);
                   return;
                }
             }
 
-            Box var50 = this.player.getBoundingBox().expand((double)var33, (double)var33, (double)var33).grow(0.0, -0.55, 0.0);
-            if (this.server.isFlightEnabled() || this.player.abilities.canFly || var2.containsNonAir(var50)) {
+            Box var56 = this.player.getBoundingBox().expand((double)var41, (double)var41, (double)var41).grow(0.0, -0.55, 0.0);
+            if (this.server.isFlightEnabled() || this.player.abilities.canFly || var2.containsNonAir(var56)) {
                this.floatingTime = 0;
-            } else if (var21 >= -0.03125) {
+            } else if (var29 >= -0.03125) {
                ++this.floatingTime;
                if (this.floatingTime > 80) {
                   LOGGER.warn(this.player.getName() + " was kicked for floating too long!");
@@ -322,7 +342,7 @@ public class ServerPlayNetworkHandler implements ServerPlayPacketHandler, Tickab
 
             this.player.onGround = packet.getOnGround();
             this.server.getPlayerManager().updateTrackedPos(this.player);
-            this.player.handleFall(this.player.y - var39, packet.getOnGround());
+            this.player.handleFall(this.player.y - var17, packet.getOnGround());
          } else if (this.ticks - this.lastTeleportTime > 20) {
             this.teleport(this.teleportTargetX, this.teleportTargetY, this.teleportTargetZ, this.player.yaw, this.player.pitch);
          }

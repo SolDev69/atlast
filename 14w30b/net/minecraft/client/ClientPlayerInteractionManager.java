@@ -22,7 +22,6 @@ import net.minecraft.network.packet.c2s.play.PlayerUseItemC2SPacket;
 import net.minecraft.network.packet.c2s.play.SelectSlotC2SPacket;
 import net.minecraft.resource.Identifier;
 import net.minecraft.stat.StatHandler;
-import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -247,10 +246,8 @@ public class ClientPlayerInteractionManager {
       this.updateSelectedHotbarSlot();
       if (this.networkHandler.getConnection().isOpen()) {
          this.networkHandler.getConnection().tick();
-      } else if (this.networkHandler.getConnection().getDisconnectReason() != null) {
-         this.networkHandler.getConnection().getListener().onDisconnect(this.networkHandler.getConnection().getDisconnectReason());
       } else {
-         this.networkHandler.getConnection().getListener().onDisconnect(new LiteralText("Disconnected from server"));
+         this.networkHandler.getConnection().handleDisconnection();
       }
    }
 

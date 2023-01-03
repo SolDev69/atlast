@@ -532,7 +532,7 @@ public class WorldRenderer implements WorldEventListener, ResourceReloadListener
          for(WorldRenderer.C_10cjdgthg var32 : this.f_71vlpncur) {
             WorldChunk var35 = this.world.getChunk(var32.f_27rxgdmlv.m_97olwzrjj());
 
-            for(Entity var22 : var35.getEntitiesBySection()[var32.f_27rxgdmlv.m_97olwzrjj().getY() / 16]) {
+            for(Entity var22 : var35.getEntities()[var32.f_27rxgdmlv.m_97olwzrjj().getY() / 16]) {
                boolean var23 = this.clientWorld.shouldRender(var22, view, var4, var6, var8) || var22.rider == this.client.player;
                if (var23) {
                   boolean var24 = this.client.getCamera() instanceof LivingEntity ? ((LivingEntity)this.client.getCamera()).isSleeping() : false;
@@ -650,8 +650,8 @@ public class WorldRenderer implements WorldEventListener, ResourceReloadListener
       }
 
       this.client.profiler.swap("culling");
-      BlockPos var34 = new BlockPos(var12, var14 + (double)c_47ldwddrb.getEyeHeight(), var16);
-      ChunkBlockRenderer var19 = this.f_23hjlfzwm.m_73iynvurl(var34);
+      BlockPos var32 = new BlockPos(var12, var14 + (double)c_47ldwddrb.getEyeHeight(), var16);
+      ChunkBlockRenderer var19 = this.f_23hjlfzwm.m_73iynvurl(var32);
       this.viewChanged = this.viewChanged
          || !this.f_18cxnognh.isEmpty()
          || c_47ldwddrb.x != this.cameraX
@@ -670,21 +670,21 @@ public class WorldRenderer implements WorldEventListener, ResourceReloadListener
          this.f_71vlpncur = Lists.newArrayList();
          LinkedList var21 = Lists.newLinkedList();
          if (var19 == null) {
-            int var36 = var34.getY() > 0 ? 248 : 8;
+            int var34 = var32.getY() > 0 ? 248 : 8;
 
-            for(int var39 = -this.renderDistance; var39 <= this.renderDistance; ++var39) {
-               for(int var42 = -this.renderDistance; var42 <= this.renderDistance; ++var42) {
-                  ChunkBlockRenderer var45 = this.f_23hjlfzwm.m_73iynvurl(new BlockPos((var39 << 4) + 8, var36, (var42 << 4) + 8));
-                  if (var45 != null && c_72tlvecqx.isVisible(var45.f_59rfoaecb)) {
-                     var45.m_03zdnqaut(i);
-                     var21.add(new WorldRenderer.C_10cjdgthg(var45, null, 0));
+            for(int var37 = -this.renderDistance; var37 <= this.renderDistance; ++var37) {
+               for(int var40 = -this.renderDistance; var40 <= this.renderDistance; ++var40) {
+                  ChunkBlockRenderer var43 = this.f_23hjlfzwm.m_73iynvurl(new BlockPos((var37 << 4) + 8, var34, (var40 << 4) + 8));
+                  if (var43 != null && c_72tlvecqx.isVisible(var43.f_59rfoaecb)) {
+                     var43.m_03zdnqaut(i);
+                     var21.add(new WorldRenderer.C_10cjdgthg(var43, null, 0));
                   }
                }
             }
          } else {
             WorldRenderer.C_10cjdgthg var22 = new WorldRenderer.C_10cjdgthg(var19, null, 0);
             C_09tthcadg var23 = new C_09tthcadg();
-            BlockPos var24 = new BlockPos(var34.getX() >> 4 << 4, var34.getY() >> 4 << 4, var34.getZ() >> 4 << 4);
+            BlockPos var24 = new BlockPos(var32.getX() >> 4 << 4, var32.getY() >> 4 << 4, var32.getZ() >> 4 << 4);
             WorldChunk var25 = this.world.getChunk(var24);
 
             for(BlockPos.Mutable var27 : BlockPos.iterateRegionMutable(var24, var24.add(15, 15, 15))) {
@@ -693,50 +693,41 @@ public class WorldRenderer implements WorldEventListener, ResourceReloadListener
                }
             }
 
-            Set var47 = var23.m_22ngzuorx(var34);
-            boolean var49 = var47.isEmpty();
+            Set var45 = var23.m_22ngzuorx(var32);
+            boolean var47 = var45.isEmpty();
             Vector3f var28 = this.m_84ykppcfz(c_47ldwddrb, d);
             Direction var29 = Direction.getClosest(var28.x, var28.y, var28.z).getOpposite();
-            var47.remove(var29);
-            if (!var49 && var47.isEmpty()) {
-               var49 = true;
+            var45.remove(var29);
+            if (!var47 && var45.isEmpty()) {
+               var47 = true;
             }
 
-            this.f_71vlpncur.add(var22);
-            if (!var49) {
+            if (var47) {
+               this.f_71vlpncur.add(var22);
+            } else {
                var19.m_03zdnqaut(i);
-
-               for(Direction var31 : var47) {
-                  ChunkBlockRenderer var32 = this.m_84yztqgoa(var34, var22.f_27rxgdmlv.m_97olwzrjj(), var31);
-                  if (var32 != null) {
-                     var32.m_03zdnqaut(i);
-                     WorldRenderer.C_10cjdgthg var33 = new WorldRenderer.C_10cjdgthg(var32, var31, 0);
-                     var33.f_92ncsbxsg.add(var31);
-                     var21.add(var33);
-                  }
-               }
+               var21.add(var22);
             }
          }
 
          while(!var21.isEmpty()) {
-            WorldRenderer.C_10cjdgthg var37 = (WorldRenderer.C_10cjdgthg)var21.poll();
-            ChunkBlockRenderer var40 = var37.f_27rxgdmlv;
-            Direction var43 = var37.f_73glpdxlf;
-            BlockPos var46 = var40.m_97olwzrjj();
-            this.f_71vlpncur.add(var37);
+            WorldRenderer.C_10cjdgthg var35 = (WorldRenderer.C_10cjdgthg)var21.poll();
+            ChunkBlockRenderer var38 = var35.f_27rxgdmlv;
+            Direction var41 = var35.f_73glpdxlf;
+            BlockPos var44 = var38.m_97olwzrjj();
+            this.f_71vlpncur.add(var35);
 
-            for(Direction var52 : Direction.values()) {
-               if (!this.client.f_40dttiifl || !var37.f_92ncsbxsg.contains(var52.getOpposite())) {
-                  ChunkBlockRenderer var53 = this.m_84yztqgoa(var34, var46, var52);
-                  if (var53 != null
-                     && (!this.client.f_40dttiifl || var43 == null || var40.m_86rgndiak().m_58vwhpzov(var43.getOpposite(), var52))
-                     && var53.m_03zdnqaut(i)
-                     && c_72tlvecqx.isVisible(var53.f_59rfoaecb)) {
-                     WorldRenderer.C_10cjdgthg var54 = new WorldRenderer.C_10cjdgthg(var53, var52, var37.f_30grnaxtk + 1);
-                     var54.f_92ncsbxsg.addAll(var37.f_92ncsbxsg);
-                     var54.f_92ncsbxsg.add(var52);
-                     var21.add(var54);
-                  }
+            for(Direction var50 : Direction.values()) {
+               ChunkBlockRenderer var30 = this.m_84yztqgoa(var32, var44, var50);
+               if ((!this.client.f_40dttiifl || !var35.f_92ncsbxsg.contains(var50.getOpposite()))
+                  && (!this.client.f_40dttiifl || var41 == null || var38.m_86rgndiak().m_58vwhpzov(var41.getOpposite(), var50))
+                  && var30 != null
+                  && var30.m_03zdnqaut(i)
+                  && c_72tlvecqx.isVisible(var30.f_59rfoaecb)) {
+                  WorldRenderer.C_10cjdgthg var31 = new WorldRenderer.C_10cjdgthg(var30, var50, var35.f_30grnaxtk + 1);
+                  var31.f_92ncsbxsg.addAll(var35.f_92ncsbxsg);
+                  var31.f_92ncsbxsg.add(var50);
+                  var21.add(var31);
                }
             }
          }
@@ -748,18 +739,18 @@ public class WorldRenderer implements WorldEventListener, ResourceReloadListener
       }
 
       this.f_81yxjkkqc.m_13sztraxa();
-      ArrayList var35 = Lists.newArrayList(this.f_18cxnognh);
+      ArrayList var33 = Lists.newArrayList(this.f_18cxnognh);
       this.f_18cxnognh.clear();
 
-      for(WorldRenderer.C_10cjdgthg var41 : this.f_71vlpncur) {
-         ChunkBlockRenderer var44 = var41.f_27rxgdmlv;
-         if (var44.m_68asckfgm() || var44.m_97tfqykgn()) {
+      for(WorldRenderer.C_10cjdgthg var39 : this.f_71vlpncur) {
+         ChunkBlockRenderer var42 = var39.f_27rxgdmlv;
+         if (var42.m_68asckfgm() || var42.m_97tfqykgn()) {
             this.viewChanged = true;
-            this.f_18cxnognh.add(var44);
+            this.f_18cxnognh.add(var42);
          }
       }
 
-      this.f_18cxnognh.addAll(var35);
+      this.f_18cxnognh.addAll(var33);
       this.client.profiler.pop();
    }
 
@@ -808,6 +799,10 @@ public class WorldRenderer implements WorldEventListener, ResourceReloadListener
    protected Vector3f m_84ykppcfz(Entity c_47ldwddrb, double d) {
       float var4 = (float)((double)c_47ldwddrb.prevPitch + (double)(c_47ldwddrb.pitch - c_47ldwddrb.prevPitch) * d);
       float var5 = (float)((double)c_47ldwddrb.prevYaw + (double)(c_47ldwddrb.yaw - c_47ldwddrb.prevYaw) * d);
+      if (MinecraftClient.getInstance().options.perspective == 2) {
+         var4 += 180.0F;
+      }
+
       float var6 = MathHelper.cos(-var5 * (float) (Math.PI / 180.0) - (float) Math.PI);
       float var7 = MathHelper.sin(-var5 * (float) (Math.PI / 180.0) - (float) Math.PI);
       float var8 = -MathHelper.cos(-var4 * (float) (Math.PI / 180.0));

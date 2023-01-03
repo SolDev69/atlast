@@ -60,7 +60,7 @@ public class ConnectScreen extends Screen {
                   ConnectScreen.this.connection = Connection.connect(var1, port);
                   ConnectScreen.this.connection
                      .setListener(new ClientLoginNetworkHandler(ConnectScreen.this.connection, ConnectScreen.this.client, ConnectScreen.this.parent));
-                  ConnectScreen.this.connection.send(new HandshakeC2SPacket(30, address, port, NetworkProtocol.LOGIN));
+                  ConnectScreen.this.connection.send(new HandshakeC2SPacket(31, address, port, NetworkProtocol.LOGIN));
                   ConnectScreen.this.connection.send(new HelloC2SPacket(ConnectScreen.this.client.getSession().getProfile()));
                } catch (UnknownHostException var5) {
                   if (ConnectScreen.this.connectingCancelled) {
@@ -97,8 +97,8 @@ public class ConnectScreen extends Screen {
       if (this.connection != null) {
          if (this.connection.isOpen()) {
             this.connection.tick();
-         } else if (this.connection.getDisconnectReason() != null) {
-            this.connection.getListener().onDisconnect(this.connection.getDisconnectReason());
+         } else {
+            this.connection.handleDisconnection();
          }
       }
    }

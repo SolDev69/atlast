@@ -53,9 +53,9 @@ public class Camera {
       double var3 = camera.prevX + (camera.x - camera.prevX) * tickDelta;
       double var5 = camera.prevY + (camera.y - camera.prevY) * tickDelta;
       double var7 = camera.prevZ + (camera.z - camera.prevZ) * tickDelta;
-      double var9 = var3 + offset.x * 1.0;
-      double var11 = var5 + offset.y * 1.0;
-      double var13 = var7 + offset.z * 1.0;
+      double var9 = var3 + offset.x;
+      double var11 = var5 + offset.y;
+      double var13 = var7 + offset.z;
       return new Vec3d(var9, var11, var13);
    }
 

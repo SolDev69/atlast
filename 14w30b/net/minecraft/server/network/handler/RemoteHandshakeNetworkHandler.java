@@ -22,12 +22,12 @@ public class RemoteHandshakeNetworkHandler implements ServerHandshakePacketHandl
       switch(packet.getProtocol()) {
          case LOGIN:
             this.connection.setProtocol(NetworkProtocol.LOGIN);
-            if (packet.getVersion() > 30) {
-               LiteralText var2 = new LiteralText("Outdated server! I'm still on 14w30b");
+            if (packet.getVersion() > 31) {
+               LiteralText var2 = new LiteralText("Outdated server! I'm still on 14w30c");
                this.connection.send(new LoginFailS2CPacket(var2));
                this.connection.disconnect(var2);
-            } else if (packet.getVersion() < 30) {
-               LiteralText var3 = new LiteralText("Outdated client! Please use 14w30b");
+            } else if (packet.getVersion() < 31) {
+               LiteralText var3 = new LiteralText("Outdated client! Please use 14w30c");
                this.connection.send(new LoginFailS2CPacket(var3));
                this.connection.disconnect(var3);
             } else {

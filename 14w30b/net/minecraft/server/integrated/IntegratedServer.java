@@ -36,8 +36,14 @@ public class IntegratedServer extends MinecraftServer {
    private boolean published;
    private LanServerPinger pinger;
 
+   public IntegratedServer(MinecraftClient client) {
+      super(client.getNetworkProxy(), new File(client.runDir, USER_CACHE.getName()));
+      this.client = client;
+      this.info = null;
+   }
+
    public IntegratedServer(MinecraftClient client, String name, String serverName, WorldSettings info) {
-      super(new File(client.runDir, "saves"), client.getNetworkProxy());
+      super(new File(client.runDir, "saves"), client.getNetworkProxy(), new File(client.runDir, USER_CACHE.getName()));
       this.setUserName(client.getSession().getUsername());
       this.setWorldDirName(name);
       this.setWorldName(serverName);
@@ -103,7 +109,7 @@ public class IntegratedServer extends MinecraftServer {
 
    @Override
    protected boolean init() {
-      LOGGER.info("Starting integrated minecraft server version 14w30b");
+      LOGGER.info("Starting integrated minecraft server version 14w30c");
       this.setOnlineMode(true);
       this.setSpawnAnimals(true);
       this.setSpawnNpcs(true);
@@ -173,7 +179,7 @@ public class IntegratedServer extends MinecraftServer {
    }
 
    @Override
-   protected File getRunDir() {
+   public File getRunDir() {
       return this.client.runDir;
    }
 

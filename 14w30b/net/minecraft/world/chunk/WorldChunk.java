@@ -1,7 +1,6 @@
 package net.minecraft.world.chunk;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +14,7 @@ import net.minecraft.block.entity.BlockEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.TypeInstanceMultiMap;
 import net.minecraft.util.crash.CashReportCategory;
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
@@ -47,7 +47,7 @@ public class WorldChunk {
    public final int chunkZ;
    private boolean recheckGap;
    private final Map blockEntities = Maps.newHashMap();
-   private final List[] entitiesBySection;
+   private final TypeInstanceMultiMap[] entitiesBySection;
    private boolean terrainPopulated;
    private boolean lightPopulated;
    private boolean hasTicked;
@@ -59,14 +59,14 @@ public class WorldChunk {
    private int queuedLightChecks = 4096;
 
    public WorldChunk(World world, int chunkX, int chunkZ) {
-      this.entitiesBySection = new List[16];
+      this.entitiesBySection = new TypeInstanceMultiMap[16];
       this.world = world;
       this.chunkX = chunkX;
       this.chunkZ = chunkZ;
       this.heightMap = new int[256];
 
       for(int var4 = 0; var4 < this.entitiesBySection.length; ++var4) {
-         this.entitiesBySection[var4] = Lists.newArrayList();
+         this.entitiesBySection[var4] = new TypeInstanceMultiMap();
       }
 
       Arrays.fill(this.precipitationHeight, -999);
@@ -131,8 +131,8 @@ public class WorldChunk {
          for(int var3 = 0; var3 < 16; ++var3) {
             this.precipitationHeight[var2 + (var3 << 4)] = -999;
 
-            for(int var4 = var1 + 16 - 1; var4 >= 0; --var4) {
-               Block var5 = this.getBlockAt(var2, var4, var3);
+            for(int var4 = var1 + 16; var4 > 0; --var4) {
+               Block var5 = this.getBlockAt(var2, var4 - 1, var3);
                if (var5.getOpacity() != 0) {
                   this.heightMap[var3 << 4 | var2] = var4;
                   if (var4 < this.lowestHeight) {
@@ -155,8 +155,8 @@ public class WorldChunk {
          for(int var3 = 0; var3 < 16; ++var3) {
             this.precipitationHeight[var2 + (var3 << 4)] = -999;
 
-            for(int var4 = var1 + 16 - 1; var4 >= 0; --var4) {
-               if (this.getOpacityAt(var2, var4, var3) != 0) {
+            for(int var4 = var1 + 16; var4 > 0; --var4) {
+               if (this.getOpacityAt(var2, var4 - 1, var3) != 0) {
                   this.heightMap[var3 << 4 | var2] = var4;
                   if (var4 < this.lowestHeight) {
                      this.lowestHeight = var4;
@@ -711,18 +711,15 @@ public class WorldChunk {
       var6 = MathHelper.clamp(var6, 0, this.entitiesBySection.length - 1);
 
       for(int var7 = var5; var7 <= var6; ++var7) {
-         List var8 = this.entitiesBySection[var7];
-
-         for(int var9 = 0; var9 < var8.size(); ++var9) {
-            Entity var10 = (Entity)var8.get(var9);
-            if (var10 != exclude && var10.getBoundingBox().intersects(box) && (filter == null || filter.apply(var10))) {
-               entities.add(var10);
-               Entity[] var11 = var10.getParts();
-               if (var11 != null) {
-                  for(int var12 = 0; var12 < var11.length; ++var12) {
-                     var10 = var11[var12];
-                     if (var10 != exclude && var10.getBoundingBox().intersects(box) && (filter == null || filter.apply(var10))) {
-                        entities.add(var10);
+         for(Entity var9 : this.entitiesBySection[var7]) {
+            if (var9 != exclude && var9.getBoundingBox().intersects(box) && (filter == null || filter.apply(var9))) {
+               entities.add(var9);
+               Entity[] var10 = var9.getParts();
+               if (var10 != null) {
+                  for(int var11 = 0; var11 < var10.length; ++var11) {
+                     var9 = var10[var11];
+                     if (var9 != exclude && var9.getBoundingBox().intersects(box) && (filter == null || filter.apply(var9))) {
+                        entities.add(var9);
                      }
                   }
                }
@@ -738,12 +735,9 @@ public class WorldChunk {
       var6 = MathHelper.clamp(var6, 0, this.entitiesBySection.length - 1);
 
       for(int var7 = var5; var7 <= var6; ++var7) {
-         List var8 = this.entitiesBySection[var7];
-
-         for(int var9 = 0; var9 < var8.size(); ++var9) {
-            Entity var10 = (Entity)var8.get(var9);
-            if (type.isAssignableFrom(var10.getClass()) && var10.getBoundingBox().intersects(box) && (filter == null || filter.apply(var10))) {
-               entities.add(var10);
+         for(Entity var9 : this.entitiesBySection[var7].find(type)) {
+            if (var9.getBoundingBox().intersects(box) && (filter == null || filter.apply(var9))) {
+               entities.add(var9);
             }
          }
       }
@@ -1140,7 +1134,7 @@ public class WorldChunk {
       return this.blockEntities;
    }
 
-   public List[] getEntitiesBySection() {
+   public TypeInstanceMultiMap[] getEntities() {
       return this.entitiesBySection;
    }
 

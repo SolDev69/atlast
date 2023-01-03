@@ -1339,20 +1339,20 @@ public abstract class Entity implements CommandSource {
    }
 
    @Environment(EnvType.CLIENT)
-   public void updatePositionAndAngles(double x, double y, double z, float yaw, float pitch, int steps) {
+   public void updatePositionAndAngles(double x, double y, double z, float yaw, float pitch, int i, boolean bl) {
       this.setPosition(x, y, z);
       this.setRotation(yaw, pitch);
-      List var10 = this.world.getCollisions(this, this.getBoundingBox().contract(0.03125, 0.0, 0.03125));
-      if (!var10.isEmpty()) {
-         double var11 = 0.0;
+      List var11 = this.world.getCollisions(this, this.getBoundingBox().contract(0.03125, 0.0, 0.03125));
+      if (!var11.isEmpty()) {
+         double var12 = 0.0;
 
-         for(Box var14 : var10) {
-            if (var14.maxY > var11) {
-               var11 = var14.maxY;
+         for(Box var15 : var11) {
+            if (var15.maxY > var12) {
+               var12 = var15.maxY;
             }
          }
 
-         y += var11 - this.getBoundingBox().minY;
+         y += var12 - this.getBoundingBox().minY;
          this.setPosition(x, y, z);
       }
    }

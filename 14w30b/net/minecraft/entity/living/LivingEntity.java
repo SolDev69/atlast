@@ -1509,13 +1509,13 @@ public abstract class LivingEntity extends Entity {
 
    @Environment(EnvType.CLIENT)
    @Override
-   public void updatePositionAndAngles(double x, double y, double z, float yaw, float pitch, int steps) {
+   public void updatePositionAndAngles(double x, double y, double z, float yaw, float pitch, int i, boolean bl) {
       this.serverX = x;
       this.serverY = y;
       this.serverZ = z;
       this.serverYaw = (double)yaw;
       this.serverPitch = (double)pitch;
-      this.bodyTrackingIncrements = steps;
+      this.bodyTrackingIncrements = i;
    }
 
    public void setJumping(boolean jumping) {

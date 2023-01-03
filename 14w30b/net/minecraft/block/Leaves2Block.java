@@ -55,7 +55,7 @@ public class Leaves2Block extends AbstractLeavesBlock {
 
    @Override
    protected ItemStack getSilkTouchDrop(BlockState state) {
-      return new ItemStack(Item.byBlock(this), 1, ((PlanksBlock.Variant)state.get(VARIANT)).getIndex() + 4);
+      return new ItemStack(Item.byBlock(this), 1, ((PlanksBlock.Variant)state.get(VARIANT)).getIndex() - 4);
    }
 
    @Override

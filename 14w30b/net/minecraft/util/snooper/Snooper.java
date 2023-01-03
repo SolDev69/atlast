@@ -74,7 +74,7 @@ public class Snooper {
       this.put("os_version", System.getProperty("os.version"));
       this.put("os_architecture", System.getProperty("os.arch"));
       this.put("java_version", System.getProperty("java.version"));
-      this.put("version", "14w30b");
+      this.put("version", "14w30c");
       this.snooped.addSnooper(this);
    }
 
